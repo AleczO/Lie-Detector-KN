@@ -10,15 +10,15 @@ print(raw.ch_names)
 raw.crop(tmin=0.0, tmax=1.0)
 
 
-def evoked():
-    eeg_evoked = mne.preprocessing.create_eog_epochs(raw).average()
-    eeg_evoked.plot_joint()
+#def evoked():
+#eeg_evoked = mne.preprocessing.create_eog_epochs(raw).average()
+#eeg_evoked.plot_joint()
 
 
 def epochs_find():
     data, times = raw.get_data(return_times=True)
     
-    data = data * 1e6
+    data = data * 1e-9
 
     events = mne.find_events(raw, stim_channel='Digital')
 
@@ -34,4 +34,4 @@ def epochs_find():
 
 
 
-evoked()
+#evoked()
