@@ -1,37 +1,43 @@
 import mne
 import matplotlib.pyplot as plt
 
-filename = r'datasets\02F6BC66\EEG_ExperimentBlock.HONEST_RESPONSE_TO_TRUE_IDENTITY_raw.fif'
+filename = r'datasets\SDF673HF\EEG_ExperimentBlock.DECEITFUL_RESPONSE_TO_TRUE_IDENTITY_raw.fif'
 raw = mne.io.read_raw_fif(fname=filename)
 
-print(raw.info)
-print(raw.ch_names)
 
-raw.crop(tmin=0.0, tmax=1.0)
+raw.crop(tmin=0.0, tmax=100.0)
 
-
-#def evoked():
-#eeg_evoked = mne.preprocessing.create_eog_epochs(raw).average()
-#eeg_evoked.plot_joint()
-
-
-def epochs_find():
-    data, times = raw.get_data(return_times=True)
+def notch_filter_processing():
     
-    data = data * 1e-9
+    raw.load_data().filter(l_freq=1.5, h_freq=100.0, fir_design='firwin')
 
-    events = mne.find_events(raw, stim_channel='Digital')
+    eeg_picks = mne.pick_types(raw.info, eeg=True)
+    raw.load_data().notch_filter(freqs=[50, 100], picks=eeg_picks)
 
-    print(events)
-
-    stim_picks = mne.pick_types(raw.info, stim=True)
-    stim_names = [raw.info['ch_names'][i] for i in stim_picks]
-    print("Stim channels:", stim_names)
-
-    print(stim_picks)
-
-    print(events)
+    raw.load_data()
+    raw.apply_function(lambda v: v * 1e-8)
 
 
 
-#evoked()
+
+
+def epochs_evoked_construct():
+
+    events, event_dict = mne.events_from_annotations(raw)
+
+    picked = mne.pick_events(events, exclude=[1,2])
+
+    epochs = mne.Epochs(raw, picked, tmin=-0.01, tmax=1.0)
+
+    epochs.plot()
+    mne.viz.plot_events(picked, sfreq=raw.info["sfreq"])
+
+
+    evoked = epochs.average()
+    evoked.plot()
+
+
+
+notch_filter_processing()
+
+epochs_evoked_construct()
