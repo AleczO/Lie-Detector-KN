@@ -1,4 +1,0 @@
-import mne
-
-mne.Annotations
-

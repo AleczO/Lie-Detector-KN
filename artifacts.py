@@ -24,8 +24,6 @@ class DataPreprocessor:
 
 
 
-
-
 def epochs(raw):
 
     events, event_dict = mne.events_from_annotations(raw)
@@ -41,14 +39,7 @@ def epochs(raw):
     evoked.plot()
 
 
-
 filename = r'datasets\SDF673HF\EEG_ExperimentBlock.DECEITFUL_RESPONSE_TO_TRUE_IDENTITY_raw.fif'
 
 raw = mne.io.read_raw_fif(fname=filename)
-raw.crop(tmin=0.0, tmax=100.0)
-
-proc = DataPreprocessor()
-proc.process(raw, 1e-8)
-
-
-epochs(raw)
+# raw.crop(tmin=0.0, tmax=100.0)
